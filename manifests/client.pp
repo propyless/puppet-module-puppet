@@ -3,7 +3,7 @@ class puppet::client (
   $package_ensure  = 'installed',
   $agent_service   = {
     'type'        => 'cron',
-    'interval'    => '30',
+    'interval'    => 30,
     'cmd'         => undef,
     'puppet_bin'  => '/opt/puppetlabs/bin/puppet',
     'user'        => 'root',
@@ -43,11 +43,8 @@ class puppet::client (
 
         # Calculate the $cron_minute
         $_run_interval = pick($agent_service['interval'], 30)
-        # Validate the run_interval value to make sure its a numeric.
-        validate_integer(
-          $_run_interval,
-          'puppet::client::service[\'interval\'] must contain a valid numerical value'
-        )
+        # Validate the run_interval value to make sure its a numeric and not above 60 (1 hour)
+        validate_integer($_run_interval, 60)
         $_cron_minute = [pick($agent_service['minute'], fqdn_rand($_run_interval))]
 
         if $_run_interval <= 30 {
