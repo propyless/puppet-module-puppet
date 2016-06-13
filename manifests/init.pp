@@ -10,7 +10,7 @@ class puppet (
 ) {
 
   validate_hash($configuration)
-  validate_re($role, '/(client)|(master)/', "The role can either be 'client' or 'master' not '${role}'")
+  validate_re($role, '^(client)|(master)$', "The role can either be 'client' or 'master' not '${role}'")
 
 
   if $role == 'client' {
