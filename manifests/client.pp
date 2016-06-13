@@ -30,7 +30,7 @@ class puppet::client (
       'cron': {
 
         # Assert the order in which stuff should execute
-        Package['puppet_client'] -> Class['::puppet::config'] -> Class['cron']
+        Package['puppet_client'] -> Class['::puppet::config'] -> Cron['puppet_cron_interval']
 
         $cron_cmd    = pick(
           $agent_service['cmd'],
