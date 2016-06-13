@@ -44,7 +44,7 @@ class puppet::client (
         # Calculate the $cron_minute
         $_run_interval = pick($agent_service['interval'], 30)
         # Validate the run_interval value to make sure its a numeric.
-        validate_interger(
+        validate_integer(
           $_run_interval,
           'puppet::client::service[\'interval\'] must contain a valid numerical value'
         )
