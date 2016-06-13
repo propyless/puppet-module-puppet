@@ -4,7 +4,7 @@ class puppet::client (
   $agent_service   = {
     'type'        => 'cron',
     'interval'    => '30',
-    'cmd'         => '',
+    'cmd'         => undef,
     'puppet_bin'  => '/opt/puppetlabs/bin/puppet',
     'user'        => 'root',
     'ensure'      => 'present',
@@ -40,7 +40,6 @@ class puppet::client (
         $cron_user   = pick($agent_service['user'], 'root')
         $cron_ensure = pick($agent_service['ensure'], 'present')
         $cron_hour   = pick($agent_service['hour'], 'present')
-        $cron_cmd    = pick($agent_service['cmd'], )
 
         # Calculate the $cron_minute
         $_run_interval = pick($agent_service['interval'], 30)
