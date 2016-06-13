@@ -5,12 +5,12 @@
 #
 
 class puppet (
-  $role                   = 'node',
-  $configuration          = { },
+  $role           = 'client',
+  $configuration  = { },
 ) {
 
   validate_hash($configuration)
-  validate_re($role, '/client|master/', 'The role can either be "client" or "master"')
+  validate_re($role, '/(client)|(master)/', "The role can either be 'client' or 'master' not '${role}'")
 
 
   if $role == 'client' {
