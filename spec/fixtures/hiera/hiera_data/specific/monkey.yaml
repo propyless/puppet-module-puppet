@@ -1,0 +1,6 @@
+---
+
+puppet::role: 'client'
+puppet::conf_main:
+  server: puppet.tldr.domain.com
+  ca_server: puppetca.tldr.domain.com
