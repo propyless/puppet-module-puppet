@@ -23,26 +23,14 @@ class puppet::config (
     'ensure'  => 'present',
     'path'    => $config_path,
   }
-  notify {'test':
-    message => $configuration['main']
-  }
+
   if has_key($configuration, 'main') {
     validate_hash($configuration['main'])
     create_ini_settings({ 'main' => $configuration['main'] }, $_defaults_puppet_conf)
   }
 
-  if $::puppet::role == 'node' {
-    if has_key($configuration, 'agent') {
-      if validate_hash($configuration['agent']) {
-        create_ini_settings({ 'agent' => $configuration['agent'] }, $_defaults_puppet_conf)
-      }
-      else {
-        fail("puppet::config::configuration ")
-      }
-    }
-  }
-
   if has_key($configuration, 'agent') {
-
+    validate_hash($configuration['agent'])
+    create_ini_settings({ 'agent' => $configuration['agent'] }, $_defaults_puppet_conf)
   }
 }

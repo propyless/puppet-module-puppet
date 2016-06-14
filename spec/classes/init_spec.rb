@@ -50,14 +50,12 @@ describe 'puppet' do
             'minute' => [3, 33],
             'hour' => '*'
         ) }
-
-        it { should contain_notify('test').with(
-            'message' => 'kek'
-        ) }
-        it { should contain_ini_setting('/etc/puppetlabs/puppet/puppet.conf [main] server').with(
+        it { should contain_ini_setting('/etc/puppetlabs/puppet/puppet.conf main server').with(
             'value' => 'puppet.tldr.domain.com'
         ) }
-        it { should contain_ini_setting('[main] ca_server') }
+        it { should contain_ini_setting('/etc/puppetlabs/puppet/puppet.conf main ca_server').with(
+            'value' => 'puppetca.tldr.domain.com'
+        ) }
 
       end # context "[main]"
     end # context "with configuration"
