@@ -3,12 +3,14 @@
 # Manage the Puppet config
 
 class puppet::config (
-  $certname = $::fqdn,
-  $config_path = '/etc/puppetlabs/puppet/puppet.conf',
-  $config_owner = 'root',
-  $config_group = 'root',
-  $config_mode = '0644',
-  $configuration = $::puppet::configuration,
+  $config_path  = $::puppet::conf_path,
+  $config_owner = $::puppet::conf_owner,
+  $config_group = $::puppet::conf_group,
+  $config_mode  = $::puppet::conf_mode,
+  $conf_main    = $::puppet::conf_main,
+  $conf_agent   = $::puppet::conf_agent,
+  $conf_master  = $::puppet::conf_master,
+  $conf_user    = $::puppet::conf_user,
 ) inherits ::puppet {
 
   # Make sure that this class can only be called by this module.
@@ -19,18 +21,14 @@ class puppet::config (
     group  => $config_group,
     mode   => $config_mode
   }
+
   $_defaults_puppet_conf = {
     'ensure'  => 'present',
     'path'    => $config_path,
   }
 
-  if has_key($configuration, 'main') {
-    validate_hash($configuration['main'])
-    create_ini_settings({ 'main' => $configuration['main'] }, $_defaults_puppet_conf)
-  }
-
-  if has_key($configuration, 'agent') {
-    validate_hash($configuration['agent'])
-    create_ini_settings({ 'agent' => $configuration['agent'] }, $_defaults_puppet_conf)
-  }
+  create_ini_settings({ 'main'    => $conf_main }, $_defaults_puppet_conf)
+  create_ini_settings({ 'agent'   => $conf_agent }, $_defaults_puppet_conf)
+  create_ini_settings({ 'master'  => $conf_master }, $_defaults_puppet_conf)
+  create_ini_settings({ 'user'    => $conf_user }, $_defaults_puppet_conf)
 }

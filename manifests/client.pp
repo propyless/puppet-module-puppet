@@ -1,17 +1,8 @@
 class puppet::client (
-  $package_name    = 'puppet-agent',
-  $package_ensure  = 'installed',
-  $agent_service   = {
-    'type'        => 'cron',
-    'interval'    => 30,
-    'cmd'         => undef,
-    'puppet_bin'  => '/opt/puppetlabs/bin/puppet',
-    'user'        => 'root',
-    'ensure'      => 'present',
-    'minute'      => undef,
-    'hour'        => '*',
-  },
-) {
+  $package_name    = $::puppet::client_package_name,
+  $package_ensure  = $::puppet::client_package_ensure,
+  $agent_service   = $::puppet::client_agent_service,
+) inherits ::puppet {
   # Make sure that this class can only be called by this module.
   assert_private('puppet::client is a private class and can not be called directly')
 
