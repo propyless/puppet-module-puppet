@@ -9,8 +9,8 @@ class puppet::client (
   validate_hash($agent_service)
 
   package { 'puppet_client':
-    name   => $package_name,
     ensure => $package_ensure,
+    name   => $package_name,
   }
 
   include ::puppet::config
@@ -48,8 +48,11 @@ class puppet::client (
           user    => $cron_user,
           command => "${puppet_bin} ${$cron_cmd}",
           minute  => $cron_minute,
-          hour    => $cron_hour
+          hour    => $cron_hour,
         }
+      }
+      default: {
+      # satisfy puppet-lint
       }
     }
   }
