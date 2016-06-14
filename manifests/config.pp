@@ -7,10 +7,10 @@ class puppet::config (
   $config_owner = $::puppet::conf_owner,
   $config_group = $::puppet::conf_group,
   $config_mode  = $::puppet::conf_mode,
-  $conf_main    = $::puppet::conf_main,
-  $conf_agent   = $::puppet::conf_agent,
-  $conf_master  = $::puppet::conf_master,
-  $conf_user    = $::puppet::conf_user,
+  $conf_main    = $::puppet::conf_main_real,
+  $conf_agent   = $::puppet::conf_agent_real,
+  $conf_master  = $::puppet::conf_master_real,
+  $conf_user    = $::puppet::conf_user_real,
 ) inherits ::puppet {
 
   # Make sure that this class can only be called by this module.
