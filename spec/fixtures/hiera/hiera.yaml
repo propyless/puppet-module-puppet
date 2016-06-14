@@ -1,0 +1,8 @@
+---
+:backends:
+  - yaml
+:yaml:
+  :datadir: 'spec/fixtures/hiera/hieradata'
+:hierarchy:
+  - even_more_so/%{very_specific}
+  - specific/%{specific}
