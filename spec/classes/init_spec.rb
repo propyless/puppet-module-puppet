@@ -286,7 +286,7 @@ describe 'puppet' do
 
       end # context "with configuration"
 
-      context 'variable type and content validations' do
+      context 'variable type and contFent validations' do
         validations = {
             'must be hash' => {
                 :name => %w(conf_main conf_master conf_agent conf_user),
@@ -312,13 +312,13 @@ describe 'puppet' do
                                         '/etc/puppetlabs/puppet/puppet.conf ' + var_name.sub(/conf_/, '') + ' setting1'
                                     ).with(
                     'setting' => 'setting1',
-                    'value'   => 'the'
+                    'value' => 'the'
                 ) }
                 it { is_expected.to contain_ini_setting(
                                         '/etc/puppetlabs/puppet/puppet.conf ' + var_name.sub(/conf_/, '') + ' setting2'
                                     ).with(
                     'setting' => 'setting2',
-                    'value'   => 'game'
+                    'value' => 'game'
                 ) }
               end
             end
@@ -335,6 +335,31 @@ describe 'puppet' do
         end # validations.sort.each
 
       end # context "with invalid configuration"
+
+      describe 'with hiera_data' do
+        let :facts do
+          {
+              :fqdn => 'my_hostname.tldr.domain.com',
+              :specific => 'monkey',
+          }
+        end
+        context 'without hiera_merge' do
+          it { puts catalogue.resources }
+          it { is_expected.to contain_ini_setting('/etc/puppetlabs/puppet/puppet.conf main server').with(
+              'section' => 'main',
+              'setting' => 'server',
+              'value' => 'puppet.tldr.domain.com',
+              'path' => '/etc/puppetlabs/puppet/puppet.conf'
+          ) }
+          it { is_expected.to contain_ini_setting('/etc/puppetlabs/puppet/puppet.conf main ca_server').with(
+              'section' => 'main',
+              'setting' => 'ca_server',
+              'value' => 'puppetca.tldr.domain.com',
+              'path' => '/etc/puppetlabs/puppet/puppet.conf'
+          ) }
+        end
+      end
+
     end # describe 'client'
   end # describe 'using role'
 
