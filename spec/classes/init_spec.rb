@@ -34,7 +34,7 @@ describe 'puppet' do
             'minute' => [3, 33],
             'hour' => '*'
         ) }
-        it { is_expected.not_to contain_ini_setting }
+        it { is_expected.to have_ini_setting_resource_count(0) }
 
 
       end # context 'with no configuration'
@@ -86,6 +86,7 @@ describe 'puppet' do
               'value' => 'puppetca.tldr.domain.com',
               'path' => '/etc/puppetlabs/puppet/puppet.conf'
           ) }
+
         end # context "[main]"
 
         context '[agent]' do
