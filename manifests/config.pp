@@ -23,8 +23,11 @@ class puppet::config (
     'ensure'  => 'present',
     'path'    => $config_path,
   }
-
-  if has_key($configuration, 'main') and validate_hash($configuration['main']) {
+  notify {'test':
+    message => $configuration['main']
+  }
+  if has_key($configuration, 'main') {
+    validate_hash($configuration['main'])
     create_ini_settings({ 'main' => $configuration['main'] }, $_defaults_puppet_conf)
   }
 

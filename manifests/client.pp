@@ -45,10 +45,11 @@ class puppet::client (
         $_run_interval = pick($agent_service['interval'], 30)
         # Validate the run_interval value to make sure its a numeric and not above 60 (1 hour)
         validate_integer($_run_interval, 60)
-        $_cron_minute = [pick($agent_service['minute'], fqdn_rand($_run_interval))]
+        $_cron_minute_1 = pick($agent_service['minute'], fqdn_rand($_run_interval))
 
         if $_run_interval <= 30 {
-          $cron_minute = concat($_cron_minute, $_cron_minute + 30)
+          $_cron_minute_2 = $_cron_minute_1 + 30
+          $cron_minute = [$_cron_minute_1, $_cron_minute_2]
         }
 
         cron { 'puppet_cron_interval':
