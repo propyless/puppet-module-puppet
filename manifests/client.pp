@@ -17,20 +17,21 @@ class puppet::client (
 
   if has_key($agent_service, 'type') {
     validate_re($agent_service['type'], ['^cron$'])
+
     case $agent_service['type'] {
       'cron': {
 
         # Assert the order in which stuff should execute
         Package['puppet_client'] -> Class['::puppet::config'] -> Cron['puppet_cron_interval']
 
-        $cron_cmd    = pick(
+        $cron_cmd = pick(
           $agent_service['cmd'],
           'agent --onetime --ignorecache --no-daemonize --no-usecacheonfailure --detailed-exitcodes --no-splay'
         )
         $puppet_bin  = pick($agent_service['puppet_bin'], '/opt/puppetlabs/bin/puppet')
         $cron_user   = pick($agent_service['user'], 'root')
         $cron_ensure = pick($agent_service['ensure'], 'present')
-        $cron_hour   = pick($agent_service['hour'], 'present')
+        $cron_hour   = pick($agent_service['hour'], '*')
 
         # Calculate the $cron_minute
         $_run_interval = pick($agent_service['interval'], 30)
