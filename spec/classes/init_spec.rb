@@ -6,6 +6,15 @@ describe 'puppet' do
         :fqdn => 'my_hostname.tldr.domain.com',
     }
   end
+
+  # dirty trick to get the running version of Puppet:
+  puppet_version = `facter puppetversion`
+  if puppet_version.to_f >= 4.4
+    let(:cron_minute) { [3, 33] }
+  else
+    let(:cron_minute) { [6, 36] }
+  end
+
   describe 'using role' do
     describe 'client' do
       default_params = {
@@ -31,10 +40,10 @@ describe 'puppet' do
             'ensure' => 'present',
             'user' => 'root',
             'command' => '/opt/puppetlabs/bin/puppet agent --onetime --ignorecache --no-daemonize --no-usecacheonfailure --detailed-exitcodes --no-splay',
-            'minute' => [3, 33],
+            'minute' => cron_minute,
             'hour' => '*'
         ) }
-        it { is_expected.not_to contain_ini_setting }
+        it { is_expected.to have_ini_setting_resource_count(0) }
 
 
       end # context 'with no configuration'
@@ -54,7 +63,7 @@ describe 'puppet' do
             'ensure' => 'present',
             'user' => 'root',
             'command' => '/opt/puppetlabs/bin/puppet agent --onetime --ignorecache --no-daemonize --no-usecacheonfailure --detailed-exitcodes --no-splay',
-            'minute' => [3, 33],
+            'minute' => cron_minute,
             'hour' => '*'
         ) }
         context '[main]' do
@@ -86,6 +95,7 @@ describe 'puppet' do
               'value' => 'puppetca.tldr.domain.com',
               'path' => '/etc/puppetlabs/puppet/puppet.conf'
           ) }
+
         end # context "[main]"
 
         context '[agent]' do

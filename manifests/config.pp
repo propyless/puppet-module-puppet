@@ -17,9 +17,9 @@ class puppet::config (
   assert_private('puppet::config is a private class.')
 
   file { $config_path:
-    owner  => $config_owner,
-    group  => $config_group,
-    mode   => $config_mode
+    owner => $config_owner,
+    group => $config_group,
+    mode  => $config_mode,
   }
 
   $_defaults_puppet_conf = {
