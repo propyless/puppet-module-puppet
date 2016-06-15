@@ -66,6 +66,26 @@ describe 'puppet', :type => :class do
             'minute' => cron_minute,
             'hour' => '*'
         ) }
+        context 'cron defaults changed' do
+          let(:params) do
+            default_params.merge(
+                {
+                    :'client_agent_service' => {
+                        'type' => 'cron',
+                        'puppet_bin' => '/usr/bin/puppet',
+                        'minute' => '*/20',
+                        'cron_structure' => 'echo "Gonna run puppet now!"; %{puppet_bin} %{puppet_args}'
+                    }
+                })
+          end
+          it { is_expected.to contain_cron('puppet_cron_interval').with(
+              'ensure' => 'present',
+              'user' => 'root',
+              'command' => 'echo "Gonna run puppet now!"; /usr/bin/puppet agent --onetime --ignorecache --no-daemonize --no-usecacheonfailure --detailed-exitcodes --no-splay',
+              'minute' => '*/20',
+              'hour' => '*'
+          ) }
+        end
         context '[main]' do
           let(:params) do
             default_params.merge(
