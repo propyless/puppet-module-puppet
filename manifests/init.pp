@@ -23,17 +23,20 @@ class puppet (
   $client_package_name    = 'puppet-agent',
   $client_package_ensure  = 'installed',
   $client_agent_service   = {
-    'type'        => 'cron',
-    'interval'    => 30,
-    'cmd'         => undef,
-    'puppet_bin'  => '/opt/puppetlabs/bin/puppet',
-    'user'        => 'root',
-    'ensure'      => 'present',
-    'minute'      => undef,
-    'hour'        => '*',
+    'ensure'          => 'present',
+    'type'            => 'cron',
+    'interval'        => 30,
+    'cron_structure'  => undef,
+    'puppet_args'     => undef,
+    'puppet_bin'      => '/opt/puppetlabs/bin/puppet',
+    'user'            => 'root',
+    'minute'          => undef,
+    'hour'            => '*',
+
   },
 ) {
 
+  # Parameter validation
   validate_hash(
     $conf_main,
     $conf_agent,
@@ -62,14 +65,12 @@ class puppet (
     $conf_main_real = $conf_main
   }
 
-
   if empty($conf_agent) == false and $conf_agent_hiera_merge {
     $conf_agent_real = hiera_hash(puppet::conf_agent)
   }
   else {
     $conf_agent_real = $conf_agent
   }
-
 
   if empty($conf_master) == false and $conf_master_hiera_merge {
     $conf_master_real = hiera_hash(puppet::conf_master)
@@ -78,14 +79,12 @@ class puppet (
     $conf_master_real = $conf_master
   }
 
-
   if empty($conf_user) == false and $conf_user_hiera_merge {
     $conf_user_real = hiera_hash(puppet::conf_user)
   }
   else {
     $conf_user_real = $conf_user
   }
-
 
   if $role == 'client' {
     include ::puppet::client
