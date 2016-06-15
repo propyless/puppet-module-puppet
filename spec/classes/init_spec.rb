@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'puppet' do
+describe 'puppet', :type => :class do
   let :facts do
     {
         :fqdn => 'my_hostname.tldr.domain.com',
@@ -322,13 +322,13 @@ describe 'puppet' do
                                         '/etc/puppetlabs/puppet/puppet.conf ' + var_name.sub(/conf_/, '') + ' setting1'
                                     ).with(
                     'setting' => 'setting1',
-                    'value'   => 'the'
+                    'value' => 'the'
                 ) }
                 it { is_expected.to contain_ini_setting(
                                         '/etc/puppetlabs/puppet/puppet.conf ' + var_name.sub(/conf_/, '') + ' setting2'
                                     ).with(
                     'setting' => 'setting2',
-                    'value'   => 'game'
+                    'value' => 'game'
                 ) }
               end
             end
@@ -345,6 +345,98 @@ describe 'puppet' do
         end # validations.sort.each
 
       end # context "with invalid configuration"
+
+      describe 'with hiera_data' do
+        context 'and hiera_merge disabled' do
+          let :facts do
+            {
+                :fqdn => 'my_hostname.tldr.domain.com',
+                :specific => 'monkey',
+            }
+          end
+          it { is_expected.to compile.with_all_deps }
+          it { is_expected.to contain_class('puppet') }
+          it { is_expected.to contain_class('puppet::client') }
+          it { is_expected.to contain_package('puppet_client').that_comes_before('Class[puppet::config]') }
+          it { is_expected.to contain_class('puppet::config').that_comes_before('Cron[puppet_cron_interval]') }
+          it { is_expected.to contain_file('/etc/puppetlabs/puppet/puppet.conf').with(
+              'owner' => 'root',
+              'group' => 'root',
+              'mode' => '0644'
+          ) }
+          it { is_expected.to contain_cron('puppet_cron_interval').with(
+              'ensure' => 'present',
+              'user' => 'root',
+              'command' => '/opt/puppetlabs/bin/puppet agent --onetime --ignorecache --no-daemonize --no-usecacheonfailure --detailed-exitcodes --no-splay',
+              'minute' => cron_minute,
+              'hour' => '*'
+          ) }
+          it { is_expected.to contain_ini_setting('/etc/puppetlabs/puppet/puppet.conf main server').with(
+              'section' => 'main',
+              'setting' => 'server',
+              'value' => 'puppet.tldr.domain.com',
+              'path' => '/etc/puppetlabs/puppet/puppet.conf'
+          ) }
+          it { is_expected.to contain_ini_setting('/etc/puppetlabs/puppet/puppet.conf main ca_server').with(
+              'section' => 'main',
+              'setting' => 'ca_server',
+              'value' => 'puppetca.tldr.domain.com',
+              'path' => '/etc/puppetlabs/puppet/puppet.conf'
+          ) }
+        end # context "and hiera_merge disabled"
+
+        context 'and hiera_merge enabled' do
+          let :facts do
+            {
+                :fqdn           => 'my_hostname.tldr.domain.com',
+                :specific       => 'monkey',
+                :very_specific  => 'true'
+            }
+          end
+          it { is_expected.to compile.with_all_deps }
+          it { is_expected.to contain_class('puppet') }
+          it { is_expected.to contain_class('puppet::client') }
+          it { is_expected.to contain_package('puppet_client').that_comes_before('Class[puppet::config]') }
+          it { is_expected.to contain_class('puppet::config').that_comes_before('Cron[puppet_cron_interval]') }
+          it { is_expected.to contain_file('/etc/puppetlabs/puppet/puppet.conf').with(
+              'owner' => 'root',
+              'group' => 'root',
+              'mode' => '0644'
+          ) }
+          it { is_expected.to contain_cron('puppet_cron_interval').with(
+              'ensure' => 'present',
+              'user' => 'root',
+              'command' => '/opt/puppetlabs/bin/puppet agent --onetime --ignorecache --no-daemonize --no-usecacheonfailure --detailed-exitcodes --no-splay',
+              'minute' => cron_minute,
+              'hour' => '*'
+          ) }
+          it { is_expected.to contain_ini_setting('/etc/puppetlabs/puppet/puppet.conf main server').with(
+              'section' => 'main',
+              'setting' => 'server',
+              'value' => 'puppet.tldr.domain.com',
+              'path' => '/etc/puppetlabs/puppet/puppet.conf'
+          ) }
+          it { is_expected.to contain_ini_setting('/etc/puppetlabs/puppet/puppet.conf main ca_server').with(
+              'section' => 'main',
+              'setting' => 'ca_server',
+              'value' => 'puppetca.tldr.domain.com',
+              'path' => '/etc/puppetlabs/puppet/puppet.conf'
+          ) }
+          it { is_expected.to contain_ini_setting('/etc/puppetlabs/puppet/puppet.conf main vardir').with(
+              'section' => 'main',
+              'setting' => 'vardir',
+              'value' => '/dev/null',
+              'path' => '/etc/puppetlabs/puppet/puppet.conf'
+          ) }
+          it { is_expected.to contain_ini_setting('/etc/puppetlabs/puppet/puppet.conf main ca').with(
+              'section' => 'main',
+              'setting' => 'ca',
+              'value' => 'true',
+              'path' => '/etc/puppetlabs/puppet/puppet.conf'
+          ) }
+        end # context "and hiera_merge disabled"
+      end # describe "with hiera_data"
+
     end # describe 'client'
   end # describe 'using role'
 
