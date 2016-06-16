@@ -1,6 +1,7 @@
 ---
 
 puppet::role: 'client'
+puppet::conf_main_hiera_merge: true
 puppet::conf_main:
   ca: 'false'
   server: puppet.tldr.domain.com
