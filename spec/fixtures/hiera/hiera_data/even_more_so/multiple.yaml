@@ -1,0 +1,6 @@
+---
+
+puppet::role: 'client'
+puppet::conf_main:
+  ca: 'true'
+
