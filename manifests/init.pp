@@ -26,13 +26,12 @@ class puppet (
     'ensure'          => 'present',
     'type'            => 'cron',
     'interval'        => 30,
-    'cron_structure'  => undef,
-    'puppet_args'     => undef,
+    'cron_structure'  => '%{puppet_bin} %{puppet_args}',
+    'puppet_args'     => 'agent --onetime --ignorecache --no-daemonize --no-usecacheonfailure --detailed-exitcodes --no-splay',
     'puppet_bin'      => '/opt/puppetlabs/bin/puppet',
     'user'            => 'root',
     'minute'          => undef,
     'hour'            => '*',
-
   },
 ) {
 
